@@ -41,7 +41,7 @@ public class EsperClient {
             epCompiled = compiler.compile(
                     "@public @buseventtype create json schema " +
                     "PhotoEvent(camera string, genre string, iso int, width int, height int, ts string);" +
-                    "@name('result') SELECT * from PhotoEvent;",
+                    "@name('result') SELECT * from PhotoEvent where width <= 0.1*height or height <= 0.1*width;",
                     compilerArgs
             );
         }
