@@ -41,8 +41,16 @@ public class EsperClient {
             epCompiled = compiler.compile(
                     "@public @buseventtype create json schema " +
                     "PhotoEvent(camera string, genre string, iso int, width int, height int, ts string);" +
-                    "@name('result') SELECT * from PhotoEvent;",
-                    compilerArgs
+
+                    "create window BeautyPhotos#length(5) as PhotoEvent;" +
+                    "on PhotoEvent(genre='Beauty') merge BeautyPhotos insert select *;" +
+
+                    "create window WeddingPhotos#length(5) as PhotoEvent;" +
+                    "on PhotoEvent(genre='Wedding') merge WeddingPhotos insert select *;" +
+
+                    "@name('result') select avg(w.iso)/avg(b.iso) as iloraz from WeddingPhotos w full outer join BeautyPhotos b " +
+                    "having avg(w.iso)/avg(b.iso) is not null;",
+            compilerArgs
             );
         }
         catch (EPCompileException ex) {
