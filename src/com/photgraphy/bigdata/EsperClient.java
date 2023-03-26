@@ -41,7 +41,8 @@ public class EsperClient {
             epCompiled = compiler.compile(
                     "@public @buseventtype create json schema " +
                     "PhotoEvent(camera string, genre string, iso int, width int, height int, ts string);" +
-                    "@name('result') SELECT * from PhotoEvent;",
+                    "@name('result') SELECT * from PhotoEvent#ext_timed(java.sql.Timestamp.valueOf(ts).getTime(), 5 min)" +
+                    "group by genre having iso >= 2 * MEDIAN(iso) or iso * 2 <= MEDIAN(iso);",
                     compilerArgs
             );
         }
