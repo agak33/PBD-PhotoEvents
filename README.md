@@ -34,10 +34,16 @@ Etykieta ta może się losowo spóźniać w stosunku do czasu systemowego, maksy
   - typ: int
   - znaczenie: wysokość zdjęcia, w pikselach
   - kategoria: atrybut lub atrybuty, których wartości można agregować (wartości numeryczne, liczba całkowita z przedziału [50, 10 000])
-- **ts**
+- **ets**
   - typ: string
   - znaczenie: data i czas publikacji zdjęcia
-  - kategoria: znacznik czasowy zdarzeń (inny niż czas systemowy)
+  - format: ``yyyy-MM-dd HH:mm:ss``
+  - kategoria: znacznik czasowy zdarzeń (inny niż czas systemowy), zaokrąglony do 1 sekundy
+- **its**
+  - typ: string
+  - znaczenie: data i czas otrzymania zdarzenia
+  - format: ``yyyy-MM-dd HH:mm:ss``
+  - kategoria: czas systemowy, zaokrąglony do 1 sekundy
 
 ## Opis trzech przykładowych analiz
 

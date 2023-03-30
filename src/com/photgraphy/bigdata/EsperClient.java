@@ -14,6 +14,7 @@ import net.datafaker.fileformats.Format;
 
 import java.sql.Array;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -38,10 +39,12 @@ public class EsperClient {
         EPCompiler compiler = EPCompilerProvider.getCompiler();
         EPCompiled epCompiled;
         try {
-            epCompiled = compiler.compile(
-                    "@public @buseventtype create json schema " +
-                    "PhotoEvent(camera string, genre string, iso int, width int, height int, ts string);" +
-                    "@name('result') SELECT * from PhotoEvent;",
+            epCompiled = compiler.compile("""
+                        @public @buseventtype create json schema
+                        PhotoEvent(camera string, genre string, iso int, width int, height int, ets string, its string);
+                        
+                        @name('result') SELECT * from PhotoEvent;
+                    """,
                     compilerArgs
             );
         }
@@ -91,7 +94,8 @@ public class EsperClient {
                 String height = String.valueOf(faker.number().numberBetween(MIN_PIXELS, MAX_PIXELS));
                 String width = String.valueOf(faker.number().numberBetween(MIN_PIXELS, MAX_PIXELS));
 
-                Timestamp timestamp = faker.date().past(MAX_DELAY_IN_SECONDS, TimeUnit.SECONDS);
+                Timestamp pubTimestamp = faker.date().past(MAX_DELAY_IN_SECONDS, TimeUnit.SECONDS);
+                Timestamp regTimestamp = new Timestamp(System.currentTimeMillis());
 
                 record = Format.toJson()
                         .set("camera", () -> camera)
@@ -99,7 +103,8 @@ public class EsperClient {
                         .set("iso", () -> ISO)
                         .set("width", () -> width)
                         .set("height", () -> height)
-                        .set("ts", () -> timestamp.toString())
+                        .set("ets", () -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(pubTimestamp))
+                        .set("its", () -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(regTimestamp))
                         .build().generate();
                 runtime.getEventService().sendEventJson(record, "PhotoEvent");
             }
